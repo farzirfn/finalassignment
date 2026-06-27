@@ -45,18 +45,6 @@ if (
 }
 
 try {
-    $imageName = "activity_" . uniqid() . ".png";
-    $uploadDir = "../uploads/activities/";
-
-    if (!is_dir($uploadDir)) {
-        mkdir($uploadDir, 0777, true);
-    }
-
-    file_put_contents(
-        $uploadDir . $imageName,
-        base64_decode($image)
-    );
-
     $insert = $db->prepare("
         INSERT INTO activities (
             title, description, venue, activity_date, activity_time, 
@@ -74,8 +62,25 @@ try {
         $organizer_phone,
         $max_participants,
         $provide_merit,
-        $imageName
+        ""
     ]);
+
+    $id = $db->lastInsertId();
+    $imageName = "activity_" . $id . ".png";
+
+    $update = $db->prepare("UPDATE activities SET image = ? WHERE id = ?");
+    $update->execute([$imageName, $id]);
+
+    $uploadDir = "../uploads/activities/";
+
+    if (!is_dir($uploadDir)) {
+        mkdir($uploadDir, 0777, true);
+    }
+
+    file_put_contents(
+        $uploadDir . $imageName,
+        base64_decode($image)
+    );
 
     echo json_encode([
         "status" => "success",

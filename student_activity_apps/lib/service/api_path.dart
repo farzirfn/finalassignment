@@ -8,7 +8,7 @@ class ApiPath {
 
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
-        return "http://10.144.0.252/studentactivity";
+        return "http://172.20.10.3/studentactivity";
       default:
         return "http://localhost/studentactivity";
     }
